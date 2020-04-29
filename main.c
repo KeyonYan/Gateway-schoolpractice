@@ -7,11 +7,14 @@
 #include <sys/sem.h>
 #include <sys/ipc.h>
 #include <stdlib.h>
+#include "server.h"
 
 pthread_t id_led;
 pthread_mutex_t mutex_led;
 pthread_cond_t cond_led;
 int led_value = 0;
+
+pthread_t id_network;
 
 void *pthread_led(void *arg) {
     printf("pthread_ledis ok\n");
@@ -31,6 +34,11 @@ int main(int argc, char** argv) {
     pthread_cond_init(&cond_led, NULL);
 
     ret = pthread_create(&id_led, 0, pthread_led, NULL);
+    if (ret != 0) {
+        perror("thread create");
+        exit(-1);
+    }
+    ret = pthread_create(&id_network, 0, pthread_network, NULL);
     if (ret != 0) {
         perror("thread create");
         exit(-1);

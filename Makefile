@@ -1,15 +1,16 @@
 CC 		= gcc			# 编译器
-AFLAGS 	= -Wall -c -g	# 参数
+CFLAGS 	= -Wall -c -g
 LDFLAGS	= -lpthread		# 多线程依赖
-OBJS	= main.o
+SROUCES = $(wildcard ./*.c)
+OBJS	= $(patsubst %.c, %.o, $(SROUCES))
+INCLUDES= -I ./
 TARGET  = gateway
 
 $(TARGET):$(OBJS)
 	$(CC) -o $@ $^ $(LDFLAGS)
 
-$(OBJS):%.o:%.c
-	$(CC) $(AFLAGS) $< -o $@
+%.o:%.c
+	$(CC) $(INCLUDES) -c $< -o $@ $(CFLAGS)
 
-.PHONY:clean
 clean:
-	rm *.o gateway
+	rm $(OBJ) $(TARGET)
