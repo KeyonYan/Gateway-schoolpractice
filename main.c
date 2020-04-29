@@ -8,14 +8,13 @@
 #include <sys/ipc.h>
 #include <stdlib.h>
 #include "server.h"
+#include "logger.h"
 
+// Sample pthread and mutex
 pthread_t id_led;
 pthread_mutex_t mutex_led;
 pthread_cond_t cond_led;
 int led_value = 0;
-
-pthread_t id_network;
-
 void *pthread_led(void *arg) {
     printf("pthread_ledis ok\n");
     while(1) {
@@ -27,13 +26,21 @@ void *pthread_led(void *arg) {
     }
 }
 
-int main(int argc, char** argv) {
-    int ret = 0;
-    printf("gateway start!\n");
+
+/* THREAD MODULES */
+pthread_t id_network;   // [线程] 网络模块
+pthread_t id_cmdparser; // [线程] 命令解析模块
+pthread_t id_sqlite;    // [线程] 数据存储模块
+pthread_t id_file;      // [线程] 文件模块
+pthread_t id_camera;    // [线程] 视频模块
+pthread_t id_alarm;     // [线程] 警报模块
+pthread_t id_sesor;     // [线程] 传感器模块
+
+/* INIT THREADS */
+void initThread() {
     pthread_mutex_init(&mutex_led, NULL);
     pthread_cond_init(&cond_led, NULL);
-
-    ret = pthread_create(&id_led, 0, pthread_led, NULL);
+    int ret = pthread_create(&id_led, 0, pthread_led, NULL);
     if (ret != 0) {
         perror("thread create");
         exit(-1);
@@ -56,5 +63,13 @@ int main(int argc, char** argv) {
     pthread_join(id_led, NULL);
     pthread_mutex_destroy(&mutex_led);
     pthread_cond_destroy(&cond_led);
+}
+
+/* MAIN FUNCTION */
+int main(int argc, char** argv) {
+    logger("INFO", ">> GATEWAY System \033[0;32m[Start]\n");
+    
+    initThread();
+
     return 0;
 }
