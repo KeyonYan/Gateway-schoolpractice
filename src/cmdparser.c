@@ -9,6 +9,9 @@
 
 // 命令解析模块-线程主入口
 void* pthread_cmdparser() {
-    logger("INFO", ">> [Thread]CmdParser Module \033[0;32m[Start]");
+    logger("INFO", "[CmdParser Module] >> \033[0;32m[...]");
+
+
+    logger("INFO", "[CmdParser Module] >> \033[0;32m[Start]");
     return NULL;
 }

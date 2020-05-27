@@ -36,8 +36,10 @@ void log2stdout(const char* level, char* content) {
         printf("%s[%s]%s[%s]%s %s\n", COLOR_GREEN, level, COLOR_CYAN, curtime, COLOR_WHITE, content);
     else if (strcmp(level, LOG_WARNNING) == 0)
         printf("%s[%s]%s[%s]%s %s\n", COLOR_YELLOW, level, COLOR_CYAN, curtime, COLOR_WHITE, content);
-    else
+    else if (strcmp(level, LOG_ERROR))
         printf("%s[%s]%s[%s]%s %s\n", COLOR_RED, level, COLOR_RED, curtime, COLOR_RED, content);
+    else
+        printf("%s[%s]%s[%s]%s %s\n", COLOR_WHITE, level, COLOR_CYAN, curtime, COLOR_WHITE, content);
     printf(COLOR_WHITE);
 }
 

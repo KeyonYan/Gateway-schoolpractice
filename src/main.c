@@ -7,6 +7,8 @@
 #include <sys/sem.h>
 #include <sys/ipc.h>
 #include <stdlib.h>
+#include <signal.h>
+#include <pthread.h>
 #include "server.h"
 #include "cmdparser.h"
 #include "logger.h"
@@ -45,6 +47,7 @@ void pthread_create1(pthread_t id, void *(*__start_routine) (void *)) {
         perror("thread create");
         exit(-1);
     }
+    pthread_detach(id);
 }
 
 /* INIT THREADS */
@@ -75,11 +78,31 @@ void initThread() {
     pthread_cond_destroy(&cond_led);
 }
 
+/* SIGNAL HANDLER */
+void signal_handler(int signo)
+{
+    char buf[100];
+	if(signo==SIGINT) {
+        logger("INFO", "[Main Module] >> onDestroy\033[0;32m[...]");
+        
+        // do something
+        
+        logger("INFO", "[Main Module] >> onDestroy\033[0;32m[Ok]");
+        exit(1);
+    } else {    
+        sprintf(buf, "[Main Module] >> catch other signal: %d", signo);
+        logger("WARNNING", buf);
+    }
+}
+
 /* MAIN FUNCTION */
 int main(int argc, char** argv) {
-    logger("INFO", ">> GATEWAY System \033[0;32m[Start]");
+    logger("INFO", "[MainThread] >> GATEWAY System \033[0;32m[...]");
     
+    signal(SIGINT, signal_handler);
     initThread();
+    
+    logger("INFO", "[MainThread] >> GATEWAY System \033[0;32m[Start]");
 
     return 0;
 }

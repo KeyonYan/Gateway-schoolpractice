@@ -15,3 +15,6 @@ $(TARGET):$(OBJS)
 
 clean:
 	rm $(OBJ) $(TARGET)
+
+tc:
+	$(CC) ./test/client.c -o client 
