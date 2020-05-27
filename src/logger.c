@@ -1,3 +1,8 @@
+/* Module: 日志模块
+ * Author: 闫科宇
+ * Date:   2020-04-29 22:00:00
+ * Desc:   日志打印模块，支持控制台输出与日志文件输出
+ */
 #include <stdio.h>
 #include <time.h>
 #include <string.h>
@@ -19,9 +24,7 @@ const char COLOR_CYAN[] = "\033[0;36m";
 
 
 char curtime[50];
-/**
- * ��־ģ��
- */ 
+
 void logger(const char* level, char* content) {
     log2stdout(level, content);
     log2file(level, content);

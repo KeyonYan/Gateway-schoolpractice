@@ -1,3 +1,9 @@
+/* Module: ç½‘ç»œé€šè®¯çº¿ç¨‹
+ * Author: é—«ç§‘å®‡
+ * Date:   2020-05-22 18:04:29
+ * Desc:   å¤„ç†å®¢æˆ·ç«¯è¿æ¥ä¸æ¥æ”¶å‘½ä»¤æ•°æ®ï¼Œç»æ ¡éªŒç¬¦åˆé€šè®¯åè®®æ ¼å¼åï¼Œäº¤ç»™æ¶ˆæ¯é˜Ÿåˆ—ç®¡ç†
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,19 +17,13 @@
 const int port = 6666;
 int serv_sock;
 
-/**
- * ÍøÂçÍ¨Ñ¶Ä£¿é
- * ¹¦ÄÜ½éÉÜ£º
- *  ×÷Îª·şÎñ¶Ë£¬¸ºÔğ´¦Àí¿Í»§¶ËµÄTCPÁ¬½Ó
- *  ½ÓÊÕµÄÃüÁîÊı¾İ£¬¾­Ğ£Ñé·ûºÏÍ¨Ñ¶Ğ­Òé¸ñÊ½ºó£¬½»¸øÏûÏ¢¶ÓÁĞ¹ÜÀí
- */
 void onCreate();
 void onListen();
 void onAccept();
 void onDestroy();
 
 /**
- * BIO°æ±¾
+ * BIOç‰ˆæœ¬
  */
 void* pthread_network() {
     onCreate();
