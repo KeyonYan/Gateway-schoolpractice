@@ -1,11 +1,12 @@
 CC 		= gcc								# 编译器
 CFLAGS 	= -Wall -c -g
-LDFLAGS	= -lpthread							# 多线程依赖
 SROUCES = $(wildcard ./src/*.c) 			# 源文件目录
 OBJS	= $(patsubst %.c, %.o, $(SROUCES))
 INCLUDES= -I ./include/ 					# 头文件目录
 TARGET  = gateway							# 生成项目名
 DEBUG	= -D__DEBUG__						# DEBUG模式
+LDFLAGS	= -lpthread -lsqlite3				# 多线程依赖|Sqlite3依赖
+
 
 $(TARGET):$(OBJS)
 	$(CC) -o $@ $^ $(LDFLAGS)
