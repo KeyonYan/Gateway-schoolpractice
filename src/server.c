@@ -1,3 +1,10 @@
+/* Module: 网络通讯模块
+ * Author: 闫科宇
+ * Date:   2020-05-27 21:01:13
+ * Desc:   提供TCP服务端通讯，支持多连接，采用单线程select实现I/O多路复用
+ * 		   将客户端发送的命令数据转发至消息队列MQ中
+ */
+
 #include <stdio.h>  
 #include <sys/types.h>  
 #include <sys/socket.h>  
