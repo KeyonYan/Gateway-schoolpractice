@@ -17,4 +17,5 @@ clean:
 	rm $(OBJ) $(TARGET)
 
 tc:
-	$(CC) ./test/client.c -o client 
+	$(CC) ./test/client.c -o client
+	$(CC) ./test/select_server3.c -o server3

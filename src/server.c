@@ -1,85 +1,137 @@
-/* Module: 网络通讯线程
- * Author: 闫科宇
- * Date:   2020-05-22 18:04:29
- * Desc:   处理客户端连接与接收命令数据，经校验符合通讯协议格式后，交给消息队列管理
- */
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <pthread.h>
-#include <assert.h>
+#include <stdio.h>  
+#include <sys/types.h>  
+#include <sys/socket.h>  
+#include <unistd.h>  
+#include <stdlib.h>  
+#include <errno.h>  
+#include <arpa/inet.h>  
+#include <netinet/in.h>  
+#include <string.h>  
 #include <signal.h>
+#include <assert.h>
+#include <sys/msg.h>
+#include "msgqueue.h"
 #include "logger.h"
-#include "server.h"
+#define MAXLINE	    1024  // 缓冲区大小
+#define LISTENLEN   10    // 侦听队列的长度
+#define SERV_PORT   11278 // 监听端口号
+#define FD_SETSIZE_ 1024  // FDSET集的大小
 
-
-//const int BUF_SIZE = 4096;
-const int PORT = 9090;
-int serv_sock;
-
-void onCreate();
-void onListen();
-void onAccept();
-void onDestroy();
-
-/**
- * BIO版本
- */
-void *pthread_network() {
+void *pthread_network()
+{
+	int					i, maxi, maxfd, listenfd, connfd, sockfd;
+	int					nready, client[FD_SETSIZE_];
+    struct sockaddr_in  client_addr_list[FD_SETSIZE_];
+	ssize_t				n;
+	fd_set				rset, allset;
+	char				buf[MAXLINE];
+	socklen_t			clilen;
+	struct sockaddr_in	cliaddr, servaddr;
+    char                logBuf[MAXLINE];
+    MSG*                msg;
+ 
     logger("INFO", "[Net Module] >> \033[0;32m[...]");
-    
-    onCreate();
-    logger("INFO", "[Net Module] >> \033[0;32m[Start]");
-    while(1) {
-        onAccept();
-    }
-    onDestroy();
-    return NULL;
-}
 
-void onCreate() {
-    serv_sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    assert(serv_sock >= 0);
+	listenfd = socket(AF_INET, SOCK_STREAM, 0);
+    assert(listenfd >= 0);
 
-    // 端口地址复用，解决程序中止而端口依旧占用问题
     int opt = 1;
-    setsockopt(serv_sock,SOL_SOCKET,SO_REUSEADDR,&opt,sizeof(opt));
-    
-    struct sockaddr_in serv_addr;
-    memset(&serv_addr, 0, sizeof(serv_addr));
-    serv_addr.sin_family = AF_INET; // IPv4
-    serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    serv_addr.sin_port = htons(PORT);
-    
-    int ret = bind(serv_sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr));
-    assert(ret != -1);
+    int ret = setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+    assert(ret >= 0);
 
-    ret = listen(serv_sock, 20);
-    assert(ret != -1);  
+	bzero(&servaddr, sizeof(servaddr));
+	servaddr.sin_family      = AF_INET;
+	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+	servaddr.sin_port        = htons(SERV_PORT);
+ 
+	ret = bind(listenfd, (struct sockaddr*) &servaddr, sizeof(servaddr));
+    assert(ret >= 0);
+
+	ret = listen(listenfd, LISTENLEN);
+    assert(ret >= 0);
+
+	maxfd = listenfd;			/* initialize */
+	maxi = -1;					/* index into client[] array */
+	for (i = 0; i < FD_SETSIZE_; i++)
+		client[i] = -1;			/* -1 indicates available entry */
+	FD_ZERO(&allset);
+	FD_SET(listenfd, &allset);
+
+    logger("INFO", "[Net Module] >> \033[0;32m[Ok]");
+    logger("INFO", "[Net Module] Wait for connnect.");
+	for ( ; ; ) 
+	{
+		rset = allset;		/* structure assignment */
+		nready = select(maxfd+1, &rset, NULL, NULL, NULL);
+ 
+		if (FD_ISSET(listenfd, &rset)) /* new client connection */
+		{
+			clilen = sizeof(cliaddr);
+			connfd = accept(listenfd, (struct sockaddr*) &cliaddr, &clilen);
+
+			for (i = 0; i < FD_SETSIZE_; i++) {
+                if (client[i] < 0) {
+					client[i] = connfd;	/* save descriptor */
+                    client_addr_list[i] = cliaddr;
+                    sprintf(logBuf, "[Net Module] New Client[%d][%s:%d] connect successfully\n", i, inet_ntoa(client_addr_list[i].sin_addr), client_addr_list[i].sin_port);
+                    logger("INFO", logBuf);
+					break;
+				}
+            }
+			if (i == FD_SETSIZE_) {
+				logger("WARNNING", "[Net Module] connections is full.");
+                bzero(buf, sizeof(buf));
+				sprintf(buf, "[FROM SERVER] Connections is full, please waiting.");
+                write(connfd, buf, sizeof(buf));
+                // exit(0);
+                continue;
+			}
+ 
+			FD_SET(connfd, &allset);	/* add new descriptor to set */
+			if (connfd > maxfd)
+				maxfd = connfd;			/* for select */
+			if (i > maxi)
+				maxi = i;				/* max index in client[] array */
+ 
+			if (--nready <= 0)
+				continue;				/* no more readable descriptors */
+		}
+ 
+		for (i = 0; i <= maxi; i++) 	/* check all clients for data */
+		{	
+			if ( (sockfd = client[i]) < 0)
+				continue;
+			if (FD_ISSET(sockfd, &rset)) 
+			{
+                bzero(buf, sizeof(buf));
+				if ( (n = read(sockfd, buf, MAXLINE)) == 0) /* connection closed by client */ 
+				{
+					close(sockfd);
+					FD_CLR(sockfd, &allset); // delete this fd
+					client[i] = -1;
+                    sprintf(logBuf, "[Net Module] Client[%d][%s:%d] exit!", i, inet_ntoa(client_addr_list[i].sin_addr), client_addr_list[i].sin_port);
+                    logger("INFO", logBuf);
+				} else {
+                    sprintf(logBuf, "[Net Module] Message from client[%d][%s:%d]: %s", i, inet_ntoa(client_addr_list[i].sin_addr), client_addr_list[i].sin_port, buf);
+                    logger("INFO", logBuf);
+                    
+                    // write to message queue
+                    msg = msgCreate();
+                    strcpy(msg->mtext, buf);
+                    ret = mqWrite(msg);
+                    if (ret == 0)
+						logger("INFO", "[Net Module] Write a msg to MQ \033[0;32m[Ok]");
+                    else
+						logger("ERROR", "[Net Module] Write a msg to MQ [Fail]");
+                    // echo to client
+                    write(sockfd, buf, n); 
+                    sprintf(logBuf, "[Net Module] Send to client[%d][%s:%d]: %s", i, inet_ntoa(client_addr_list[i].sin_addr), client_addr_list[i].sin_port, buf);
+                }
+				
+				if (--nready <= 0)
+					break;	/* no more readable descriptors */
+			}
+		}
+	}
 }
-
-void onAccept() {
-    struct sockaddr_in client_addr;
-    socklen_t client_addr_size = sizeof(client_addr);
-    int client_sock = accept(serv_sock, (struct sockaddr*)&client_addr, &client_addr_size);
-    assert(client_sock >= 0);
-    
-    char client_addr_str[50];
-    sprintf(client_addr_str, "[Net Module] >> Client [%s:%d] Connection OK", inet_ntoa(client_addr.sin_addr), client_addr.sin_port);
-    logger("INFO", client_addr_str);
-
-    char buf[] = "Connection [Ok]";
-    int size = write(client_sock, buf, sizeof(buf));
-    assert(size != -1);
-
-    close(client_sock);
-}
-
-void onDestroy() {
-    close(serv_sock);
-}
+ 

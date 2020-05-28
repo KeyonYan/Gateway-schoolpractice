@@ -6,7 +6,7 @@
 #include <sys/socket.h>
 
 #define IP "127.0.0.1"
-#define PORT 9090
+#define PORT 11278
 
 void main() {
     //创建套接字
@@ -24,10 +24,14 @@ void main() {
     //读取服务器传回的数据
     char buffer[40];
     memset(buffer, 0, sizeof(buffer));
-    read(sock, buffer, sizeof(buffer)-1);
+    //recv(sock, buffer, sizeof(buffer)-1, 0);
  
-    printf("from Server: %s\n", buffer);
- 
+    //printf("from Server: %s\n", buffer);
+    sprintf(buffer, "Hello Server, I am client\n");
+    write(sock, buffer, sizeof(buffer));
+    while(1) {
+        sleep(1);
+    }
     //关闭套接字
     close(sock);
     printf("close\n");

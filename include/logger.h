@@ -3,4 +3,4 @@
 
 void logger(const char* level, char* content);
 
-#endif
+#endif // !_LOGGER_H_

@@ -22,8 +22,10 @@ const char COLOR_YELLOW[] = "\033[0;33m";
 const char COLOR_WHITE[] = "\033[0;37m";
 const char COLOR_CYAN[] = "\033[0;36m";
 
-
 char curtime[50];
+
+// #define LOG(fmt, ...) printf(fmt, ##__VA_ARGS__)
+// #define SPF(fmt, ...) sprintf(str, fmt, ##_VA_ARGS__)
 
 void logger(const char* level, char* content) {
     log2stdout(level, content);
@@ -36,7 +38,7 @@ void log2stdout(const char* level, char* content) {
         printf("%s[%s]%s[%s]%s %s\n", COLOR_GREEN, level, COLOR_CYAN, curtime, COLOR_WHITE, content);
     else if (strcmp(level, LOG_WARNNING) == 0)
         printf("%s[%s]%s[%s]%s %s\n", COLOR_YELLOW, level, COLOR_CYAN, curtime, COLOR_WHITE, content);
-    else if (strcmp(level, LOG_ERROR))
+    else if (strcmp(level, LOG_ERROR) == 0)
         printf("%s[%s]%s[%s]%s %s\n", COLOR_RED, level, COLOR_RED, curtime, COLOR_RED, content);
     else
         printf("%s[%s]%s[%s]%s %s\n", COLOR_WHITE, level, COLOR_CYAN, curtime, COLOR_WHITE, content);

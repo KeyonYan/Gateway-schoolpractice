@@ -8,7 +8,7 @@
 #include "logger.h"
 
 void* pthread_sqlite() {
-    logger("INFO", ">> [Sqlite Module] >> \033[0;32m[...]");
-    logger("INFO", ">> [Sqlite Module] >> \033[0;32m[Start]");
+    logger("INFO", "[Sqlite Module] >> \033[0;32m[...]");
+    logger("INFO", "[Sqlite Module] >> \033[0;32m[Start]");
     return NULL;
 }

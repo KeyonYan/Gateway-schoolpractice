@@ -3,4 +3,4 @@
 
 void *pthread_network();
 
-#endif
+#endif // !_SERVER_H_
