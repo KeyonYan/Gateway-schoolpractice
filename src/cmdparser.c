@@ -24,28 +24,38 @@ char **cmd_chain;
 /**
  * 命令处理与调度
  */
-void cmdHandler() {
-    if (cmd_chain_size <= 0) return;
-    if (strcpy(cmd_chain[0], MSG_HEAD) != 0) return;
+int cmdHandler() {
+    if (cmd_chain_size <= 0) {
+        logger("ERROR", "[CmdParser Module]"
+                        "Message format does not conform to protocol: No delim");
+        return -1;
+    };
+    if (strcmp(cmd_chain[0], MSG_HEAD) != 0) {
+        logger("ERROR", "[CmdParser Module]"
+                        "Message format does not conform to protocol: No header");
+        return -2;
+    }
+    sprintf(logBuf, "[CmdParser Module] cmd_chain_size: %d", cmd_chain_size);
+    logger("INFO", logBuf);
     for (int i = 1; i < cmd_chain_size; i++) {
-        if (strcpy(cmd_chain[i], "LED")) {
+        if (strcmp(cmd_chain[i], "LED") == 0) { /* LED管理 */
             // do something
             logger("INFO", "control LED");
-        } else if (strcpy(cmd_chain[i], "TempSensor")) {
+        } else if (strcmp(cmd_chain[i], "TempSensor") == 0) { /* 温度传感器管理 */
             // do something
             logger("INFO", "control tempSensor");
-        } else if (strcpy(cmd_chain[i], "humidSensor")) {
+        } else if (strcmp(cmd_chain[i], "HumidSensor") == 0) { /* 湿度传感器管理 */
             // do something
             logger("INFO", "control humidSensor");
         }
     }
+    return 0;
 }
 
 // 命令解析模块-线程主入口
 void* pthread_cmdparser() {
     logger("INFO", "[CmdParser Module] >> \033[0;32m[...]");
     
-
     while(1) {
         size = mqRead(&msg, 0);
         if (size <= 0) continue;
@@ -53,6 +63,13 @@ void* pthread_cmdparser() {
         logger("INFO", logBuf);
         
         cmd_chain = split(msg.mtext, SPLIT_DELIM, &cmd_chain_size);
+        
+        #ifdef __DEBUG__
+        printf("cmd_chain_size: %d\n", cmd_chain_size);
+        printf("cmd_chain0: %s\n", cmd_chain[0]);
+        printf("cmd_chain1: %s\n", cmd_chain[1]);
+        #endif // !__DEBUG__
+        
         cmdHandler();
 
     }
