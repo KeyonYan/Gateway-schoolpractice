@@ -4,6 +4,9 @@
  * Desc:   一个工具类，包含字符串处理等操作
  */
 
+#include <string.h>
+#include <stdlib.h>
+
 /**
  * 分割字符串
  * @param srcStr      源字符串
@@ -33,21 +36,4 @@ char** split(char *srcStr, char delim, int *num) {
     memset(res[*num], 0, strlen(res[*num]));
     res[*num] = 0;
     return res;
-}
-
-int main() {
-    char str[] = "^^ 22a2 333 d";
-    int num = 0;
-    char **res = split(str, ' ', &num);
-    printf("%d\n", num);
-    for (int i = 0; i < num; i++) {
-        printf("%s\n", res[i]);
-    }
-
-    // linux execvp()
-    char cmd[] = "ls -l /etc";
-    char **argv = split(cmd, ' ', &num);
-    execvp(argv[0], argv);
-
-    return 0;
 }
