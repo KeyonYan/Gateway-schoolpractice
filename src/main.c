@@ -16,23 +16,7 @@
 #include "cmdparser.h"
 #include "sqlite_service.h"
 #include "msgqueue.h"
-
-// Sample pthread and mutex
-pthread_t id_led;
-pthread_mutex_t mutex_led;
-pthread_cond_t cond_led;
-int led_value = 0;
-void* pthread_led(void* arg) {
-    printf("pthread_ledis ok\n");
-    while(1) {
-        pthread_mutex_lock(&mutex_led); // 加锁，保护cond条件
-        pthread_cond_wait(&cond_led, &mutex_led); // 阻塞当前线程
-        pthread_mutex_unlock(&mutex_led); // 解锁
-        printf("pthread led\n");
-        sleep(1);
-    }
-}
-
+#include "sensor.h"
 
 /* THREAD MODULES */
 pthread_t id_network;   // [线程] 网络模块
@@ -41,7 +25,7 @@ pthread_t id_sqlite;    // [线程] 数据存储模块
 pthread_t id_file;      // [线程] 文件模块
 pthread_t id_camera;    // [线程] 视频模块
 pthread_t id_alarm;     // [线程] 警报模块
-pthread_t id_sesor;     // [线程] 传感器模块
+pthread_t id_sensor;     // [线程] 传感器模块
 
 void pthread_create1(pthread_t id, void *(*__start_routine) (void *)) {
     int ret = 0;
@@ -58,25 +42,8 @@ void initThread() {
     pthread_create1(id_cmdparser, pthread_cmdparser);
     // 启动数据存储线程
     pthread_create1(id_sqlite, pthread_sqlite);
-    
-
-    // pthread_mutex_init(&mutex_led, NULL);
-    // pthread_cond_init(&cond_led, NULL);
-    // // 启动LED线程
-    // pthread_create1(id_led, pthread_led);
-    // while(1) {
-    //     pthread_mutex_lock(&mutex_led);
-    //     led_value++;
-    //     printf("main thread: [%d]\n", led_value);
-    //     if (led_value % 5 == 0) {
-    //         pthread_cond_signal(&cond_led); // 满足条件 线程唤醒
-    //     }
-    //     pthread_mutex_unlock(&mutex_led);
-    //     sleep(1);
-    // }
-    // pthread_join(id_led, NULL);
-    // pthread_mutex_destroy(&mutex_led);
-    // pthread_cond_destroy(&cond_led);
+    // 启动传感器线程
+    pthread_create1(id_sensor, pthread_sensor);
 }
 
 /**

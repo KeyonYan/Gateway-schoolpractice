@@ -54,8 +54,8 @@ int cmdHandler() {
 
 // 命令解析模块-线程主入口
 void* pthread_cmdparser() {
-    logger("INFO", "[CmdParser Module] >> \033[0;32m[...]");
-    
+    logger("INFO", "[CmdParser Module] >> \033[0;32m[Ok]");
+
     while(1) {
         size = mqRead(&msg, 0);
         if (size <= 0) continue;
@@ -74,7 +74,7 @@ void* pthread_cmdparser() {
 
     }
 
-    logger("INFO", "[CmdParser Module] >> \033[0;32m[Start]");
+    logger("INFO", "[CmdParser Module] >> \033[0;32m[Close]");
     return NULL;
 }
 
