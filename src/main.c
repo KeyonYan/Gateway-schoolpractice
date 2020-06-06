@@ -18,6 +18,7 @@
 #include "msgqueue.h"
 #include "sensor.h"
 #include "alarm.h"
+#include "led.h"
 
 /* THREAD MODULES */
 pthread_t id_network;   // [线程] 网络模块
@@ -47,6 +48,8 @@ void initThread() {
     pthread_create1(id_sensor, pthread_sensor);
     // 启动警报线程
     pthread_create1(id_alarm, pthread_alarm);
+    // 启动LED线程
+    init_led();
 }
 
 /**
