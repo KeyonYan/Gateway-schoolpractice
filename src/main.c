@@ -19,12 +19,13 @@
 #include "sensor.h"
 #include "alarm.h"
 #include "led.h"
+#include "camera.h"
 
 /* THREAD MODULES */
 pthread_t id_network;   // [线程] 网络模块
 pthread_t id_cmdparser; // [线程] 命令解析模块
 pthread_t id_sqlite;    // [线程] 数据存储模块
-pthread_t id_file;      // [线程] 文件模块
+//pthread_t id_file;      // [线程] 文件模块
 pthread_t id_camera;    // [线程] 视频模块
 pthread_t id_alarm;     // [线程] 警报模块
 pthread_t id_sensor;     // [线程] 传感器模块
@@ -48,6 +49,8 @@ void initThread() {
     pthread_create1(id_sensor, pthread_sensor);
     // 启动警报线程
     pthread_create1(id_alarm, pthread_alarm);
+    // 启动视频线程
+    pthread_create1(id_camera, pthread_camera);
     // 启动LED线程
     init_led();
 }

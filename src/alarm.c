@@ -45,7 +45,6 @@ int initSerialPort() {
     fd = open( SERIALPORT_DEV, O_RDWR | O_NOCTTY | O_NDELAY);
     if (-1 == fd){ 
         /* 不能打开串口一 */ 
-        logger("ERROR", "[Alarm Module] Open serialport fail!");
         return -1;
     }
 
