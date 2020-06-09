@@ -19,17 +19,15 @@
 #define SERIALPORT_DEV "/dev/pts/20"
 
 typedef struct {
-    char size[4]; // 消息长度
-    char which;   // 消息模板
-    char size_tal[16];   // 指令
-    char info[32];      // 信息长度
+    char which;         // 消息模板
+    char info[32];      // 信息
 }AlarmMessage;
 
 AlarmMessage alarmMsg[] = {
-    {"0c", 0, "AT+CMGS=27\r", "11111111"}, // 仓库着火了
-    {"0e", 1, "AT+CMGS=28\r", "22222222"}, // 仓库有贼闯入
-    {"0a", 2, "AT+CMGS=29\r", "33333333"}, // 光照超标
-    {"0a", 3, "AT+CMGS=30\r", "44444444"}  // 湿度超标
+    {0, "The warehouse is on fire"}, // 仓库着火了
+    {1, "A thief broke into the warehouse"}, // 仓库有贼闯入
+    {2, "Excessive light"}, // 光照超标
+    {3, "Excessive humidity"}  // 湿度超标
 };
 
 char buf[1024];
@@ -83,7 +81,7 @@ void *pthread_alarm() {
     }
 
     bzero(buf, sizeof(buf));
-    sprintf(buf, "Hello World");
+    strcpy(buf, alarmMsg[0].info);
     write(fd, buf, strlen(buf));
 
     sprintf(logBuf, "[Alarm Module] SerialPort Write: %s", buf);
