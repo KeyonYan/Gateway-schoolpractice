@@ -8,7 +8,7 @@
 #define IP "127.0.0.1"
 #define PORT 11278
 
-void main() {
+void main(int argc, char *argv[]) {
     //创建套接字
     int sock = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -27,11 +27,15 @@ void main() {
     //recv(sock, buffer, sizeof(buffer)-1, 0);
  
     //printf("from Server: %s\n", buffer);
-    sprintf(buffer, "Hello Server, I am client\n");
-    write(sock, buffer, sizeof(buffer));
-    while(1) {
-        sleep(1);
+    if (argc < 1) {
+        printf("No argv\n");
+        return;
+    } else {
+        printf("argv[1]: %s\n", argv[1]);
     }
+    strcpy(buffer, argv[1]);
+    write(sock, buffer, sizeof(buffer));
+    
     //关闭套接字
     close(sock);
     printf("close\n");

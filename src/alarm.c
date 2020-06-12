@@ -16,7 +16,7 @@
 #include "logger.h"
 #include "alarm.h"
 
-#define SERIALPORT_DEV "/dev/pts/20"
+#define SERIALPORT_DEV "/dev/pts/22" // 根据com.py创建的设备节点而更改
 
 typedef struct {
     char which;         // 消息模板

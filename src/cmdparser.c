@@ -66,8 +66,9 @@ void* pthread_cmdparser() {
         
         #ifdef __DEBUG__
         printf("cmd_chain_size: %d\n", cmd_chain_size);
-        printf("cmd_chain0: %s\n", cmd_chain[0]);
-        printf("cmd_chain1: %s\n", cmd_chain[1]);
+        for (int i = 0; i < cmd_chain_size; i++) {
+            printf("cmd_chain[%d]: %s\n", i, cmd_chain[i]);
+        }
         #endif // !__DEBUG__
         
         cmdHandler();
