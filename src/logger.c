@@ -24,6 +24,8 @@ const char COLOR_WHITE[] = "\033[0;37m";
 const char COLOR_CYAN[] = "\033[0;36m";
 const char COLOR_PURPLE[] = "\033[0;35m";
 
+const char LOG_FILENAME[] = "GateWayYKY.log";
+
 char curtime[50];
 
 // #define LOG(fmt, ...) printf(fmt, ##__VA_ARGS__)
@@ -52,7 +54,15 @@ void log2stdout(const char* level, char* content) {
 }
 
 void log2file(const char* level, char* content) {
-    // TODO
+    FILE *fp;
+	char wr_buf[100];
+    int len = sprintf(wr_buf, "[%s][%s] %s\n", level, curtime, content);
+    if ((fp = fopen(LOG_FILENAME, "a+")) == NULL) {
+        perror("fopen");
+        return;
+    }
+    fwrite(wr_buf, len, 1, fp);
+	fclose(fp);
     return;
 }
 
