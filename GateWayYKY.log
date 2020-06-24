@@ -1,0 +1,23 @@
+[INFO][2020/6/24 Wed 10:03:38] [MainThread] >> GATEWAY System [0;32m[...]
+[INFO][2020/6/24 Wed 10:03:38] [MainThread] MQ Create[Ok]
+[INFO][2020/6/24 Wed 10:03:38] [MainThread] >> GATEWAY System [0;32m[Start]
+[INFO][2020/6/24 Wed 10:03:38] [Camera Module] >> [0;32m[...]
+[INFO][2020/6/24 Wed 10:03:38] [Camera Module] Write to Share-Mem [Ok]
+[INFO][2020/6/24 Wed 10:03:38] [Camera Module] Read from Share-Mem: 
+[INFO][2020/6/24 Wed 10:03:38] [Camera Module] shm->num: 2020	shm->buf: hello yky
+[INFO][2020/6/24 Wed 10:03:38] [Camera Module] >> [Close]
+[INFO][2020/6/24 Wed 10:03:38] [LED Module] >> [0;32m[Ok]
+[INFO][2020/6/24 Wed 10:03:38] [Alarm Module] >> [0;32m[...]
+[ERROR][2020/6/24 Wed 10:03:38] [Alarm Module] SerialPort init [Fail]
+[INFO][2020/6/24 Wed 10:03:38] [Sensor Module] >> [0;32m[...]
+[ERROR][2020/6/24 Wed 10:03:38] [Sensor Module] Open sensor device failed!
+[INFO][2020/6/24 Wed 10:03:38] [Sqlite Module] >> [0;32m[...]
+[INFO][2020/6/24 Wed 10:03:38] [Sqlite Module] init_db [0;32m[Ok]
+[INFO][2020/6/24 Wed 10:03:38] [Sqlite Module] >> [Close]
+[INFO][2020/6/24 Wed 10:03:38] [CmdParser Module] >> [0;32m[Ok]
+[INFO][2020/6/24 Wed 10:03:38] [Net Module] >> [0;32m[...]
+[INFO][2020/6/24 Wed 10:03:38] [Net Module] >> [0;32m[Ok]
+[INFO][2020/6/24 Wed 10:03:38] [Net Module] Wait for connnect.
+[INFO][2020/6/24 Wed 10:03:40] [Main Module] >> onDestroy[0;32m[...]
+[INFO][2020/6/24 Wed 10:03:40] [Main Thread] MQ Remove [0;32m[Ok]
+[INFO][2020/6/24 Wed 10:03:40] [Main Module] >> onDestroy[0;32m[Ok]
