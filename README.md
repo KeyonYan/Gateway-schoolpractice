@@ -6,7 +6,7 @@
 
 ### 模块调度设计
 
-![](https://keyon-photo-1256901694.cos.ap-beijing.myqcloud.com/markdown/GateWay.png)
+![](doc/GateWayYKY.png?raw=true)
 
 ## 使用
 
