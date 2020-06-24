@@ -6,7 +6,7 @@
 
 ### 模块调度设计
 
-![](doc/GateWayYKY.png?raw=true)
+![](doc\GateWay.png?raw=true)
 
 ## 使用
 
